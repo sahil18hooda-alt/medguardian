@@ -120,9 +120,15 @@ export default function DigiLockerPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-headline">Health DigiLocker</CardTitle>
-          <Button onClick={handleLogout} variant="outline">
-            Logout
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleShare} variant="outline">
+                <Share2 className="mr-2 h-4 w-4" />
+                Share with Hospital
+            </Button>
+            <Button onClick={handleLogout} variant="outline">
+                Logout
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
@@ -150,9 +156,6 @@ export default function DigiLockerPage() {
                     <div className="flex gap-2">
                       <Button size="icon" variant="ghost" onClick={() => handleDownload(file.name)}>
                         <Download className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={handleShare}>
-                        <Share2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </li>

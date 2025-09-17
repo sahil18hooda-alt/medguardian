@@ -21,7 +21,7 @@ export default function SharePage() {
   const token = searchParams.get('token');
 
   useEffect(() => {
-    if (token === 'dummy-token') {
+    if (token) {
         fetchFiles();
     } else {
         setIsLoading(false);
@@ -42,6 +42,12 @@ export default function SharePage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    for (const file of files) {
+        await handleDownload(file.name);
     }
   };
 
@@ -71,8 +77,12 @@ export default function SharePage() {
   return (
     <div className="container mx-auto max-w-5xl py-12">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-headline">Shared Medical Records</CardTitle>
+            <Button onClick={handleDownloadAll} variant="outline" disabled={files.length === 0}>
+                <Download className="mr-2 h-4 w-4" />
+                Download All
+            </Button>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -85,9 +95,6 @@ export default function SharePage() {
               {files.map((file) => (
                 <li key={file.name} className="flex items-center justify-between p-2 border rounded-md">
                   <span>{file.name}</span>
-                  <Button size="icon" variant="ghost" onClick={() => handleDownload(file.name)}>
-                    <Download className="h-4 w-4" />
-                  </Button>
                 </li>
               ))}
             </ul>
