@@ -1,25 +1,20 @@
-import { supabase } from './supabase';
-
 export const uploadFile = async (file: File) => {
-  const { data, error } = await supabase.storage
-    .from('medical_records')
-    .upload(`${Date.now()}-${file.name}`, file);
-  if (error) throw error;
-  return data;
+  // Placeholder implementation
+  console.log(`Uploading file: ${file.name}`);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return { path: `${Date.now()}-${file.name}` };
 };
 
 export const getFiles = async () => {
-  const { data, error } = await supabase.storage
-    .from('medical_records')
-    .list();
-  if (error) throw error;
-  return data;
+  // Placeholder implementation
+  console.log('Fetching files');
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return [];
 };
 
 export const downloadFile = async (fileName: string) => {
-  const { data, error } = await supabase.storage
-    .from('medical_records')
-    .download(fileName);
-  if (error) throw error;
-  return data;
+  // Placeholder implementation
+  console.log(`Downloading file: ${fileName}`);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return new Blob();
 };
