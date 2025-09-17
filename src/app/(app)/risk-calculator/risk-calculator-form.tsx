@@ -57,15 +57,15 @@ export function RiskCalculatorForm() {
     setRiskResult(null);
 
     const processedValues = {
-        ...values,
-        historicalData: {
-            ...values.historicalData,
-            previousConditions: values.historicalData.previousConditions.split(',').map(s => s.trim()).filter(Boolean),
-        },
-        currentHealthConditions: {
-            ...values.currentHealthConditions,
-            symptoms: values.currentHealthConditions.symptoms.split(',').map(s => s.trim()).filter(Boolean),
-        }
+      demographics: values.demographics,
+      historicalData: {
+        ...values.historicalData,
+        previousConditions: values.historicalData.previousConditions.split(',').map(s => s.trim()).filter(Boolean),
+      },
+      currentHealthConditions: {
+        ...values.currentHealthConditions,
+        symptoms: values.currentHealthConditions.symptoms.split(',').map(s => s.trim()).filter(Boolean),
+      },
     };
     
     try {

@@ -47,9 +47,18 @@ const prompt = ai.definePrompt({
 
   Calculate the risk score based on the following information:
 
-  Demographics: {{{JSON.stringify(demographics, null, 2)}}}
-  Historical Data: {{{JSON.stringify(historicalData, null, 2)}}}
-  Current Health Conditions: {{{JSON.stringify(currentHealthConditions, null, 2)}}}
+  Demographics:
+  - Age: {{{demographics.age}}}
+  - Gender: {{{demographics.gender}}}
+  - Location: {{{demographics.location}}}
+
+  Historical Data:
+  - Previous Conditions: {{#each historicalData.previousConditions}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  - Hospital Admissions: {{{historicalData.hospitalAdmissions}}}
+
+  Current Health Conditions:
+  - Symptoms: {{#each currentHealthConditions.symptoms}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  - Diagnosis: {{{currentHealthConditions.diagnosis}}}
 
   Provide a riskScore (numerical value), riskLevel (Low, Medium, or High), and a rationale explaining the contributing factors to the risk score.
 `,
