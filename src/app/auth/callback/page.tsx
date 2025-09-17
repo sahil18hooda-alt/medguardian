@@ -1,23 +1,22 @@
-'use client';
+import { createClient } from '@/lib/supabase'
+import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url)
+  const code = searchParams.get('code')
+  // if "next" is in param, use it as the redirect URL
+  const next = searchParams.get('next') ?? '/'
 
-export default function AuthCallback() {
-  const router = useRouter();
+  if (code) {
+    const cookieStore = cookies()
+    const supabase = createClient(cookieStore)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`)
+    }
+  }
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        router.push('/digilocker');
-      }
-    });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [router]);
-
-  return <div>Please wait, we are signing you in...</div>;
+  // return the user to an error page with instructions
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
