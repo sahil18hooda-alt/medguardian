@@ -51,7 +51,7 @@ export function VoiceRecorder() {
 
       mediaRecorderRef.current.onstop = async () => {
         setRecordingState("transcribing");
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
