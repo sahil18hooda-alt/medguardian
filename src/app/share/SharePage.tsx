@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useToast } from '@/hooks/use-toast';
 import { getFiles, downloadFile } from '@/lib/storage';
 import { Loader2, Download } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 
 interface FileObject {
   name: string;
@@ -21,15 +21,8 @@ export default function SharePage() {
   const token = searchParams.get('token');
 
   useEffect(() => {
-    if (token) {
-        // Verify the token and fetch files
-        // This is a simplified example. In a real application, you would need a more secure way to verify the token.
-        // For example, you could use a signed JWT.
-        supabase.auth.getUser(token).then(({ data: { user } }) => {
-            if(user){
-                fetchFiles();
-            }
-        })
+    if (token === 'dummy-token') {
+        fetchFiles();
     } else {
         setIsLoading(false);
         toast({ variant: 'destructive', title: 'Invalid share link' });

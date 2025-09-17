@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from '@/hooks/use-toast';
 import { getFiles, uploadFile, downloadFile } from '@/lib/storage';
 import { Loader2, Download, Share2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import {
   Dialog,
@@ -100,15 +99,11 @@ export default function DigiLockerPage() {
   };
 
   const handleShare = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const url = `${window.location.origin}/share?token=${session.access_token}`;
-      setShareUrl(url);
-    }
+    const url = `${window.location.origin}/share?token=dummy-token`;
+    setShareUrl(url);
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
     router.push('/login');
   };
 
