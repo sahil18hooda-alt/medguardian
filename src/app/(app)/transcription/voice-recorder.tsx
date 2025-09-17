@@ -8,18 +8,30 @@ import { Loader2, Mic, StopCircle, Clipboard, ClipboardCheck, AlertTriangle, Squ
 import { useToast } from "@/hooks/use-toast";
 import { clinicalNoteTranscription } from "@/ai/flows/clinical-note-transcription";
 import { cn } from "@/lib/utils";
+import { TranscriptionHistory, TranscriptionEntry } from "./transcription-history";
 
 type RecordingState = "idle" | "getting-mic" | "recording" | "stopped" | "transcribing" | "success" | "error";
 
 export function VoiceRecorder() {
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [transcription, setTranscription] = useState("");
+  const [transcriptionHistory, setTranscriptionHistory] = useState<TranscriptionEntry[]>([]);
   const [isCopied, setIsCopied] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Load history from localStorage on mount
+    try {
+      const savedHistory = localStorage.getItem("transcriptionHistory");
+      if (savedHistory) {
+        setTranscriptionHistory(JSON.parse(savedHistory));
+      }
+    } catch (error) {
+      console.error("Failed to load transcription history from localStorage", error);
+    }
+    
     // Cleanup function to stop recording if component unmounts
     return () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
@@ -27,6 +39,29 @@ export function VoiceRecorder() {
       }
     };
   }, []);
+  
+  const saveTranscription = (newTranscription: string) => {
+    if (!newTranscription) return;
+
+    try {
+      const newEntry: TranscriptionEntry = {
+        date: new Date().toISOString(),
+        text: newTranscription,
+      };
+      
+      const updatedHistory = [newEntry, ...transcriptionHistory];
+      setTranscriptionHistory(updatedHistory);
+      localStorage.setItem("transcriptionHistory", JSON.stringify(updatedHistory));
+    } catch (error) {
+        console.error("Failed to save transcription to localStorage", error);
+        toast({
+            variant: "destructive",
+            title: "Save Failed",
+            description: "Could not save the transcription to your local history.",
+        });
+    }
+  };
+
 
   const startRecording = async () => {
     setRecordingState("getting-mic");
@@ -42,7 +77,8 @@ export function VoiceRecorder() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setRecordingState("recording");
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      const options = { mimeType: 'audio/webm;codecs=opus' };
+      mediaRecorderRef.current = new MediaRecorder(stream, options);
       audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
@@ -51,7 +87,7 @@ export function VoiceRecorder() {
 
       mediaRecorderRef.current.onstop = async () => {
         setRecordingState("transcribing");
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorderRef.current?.mimeType });
         
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
@@ -60,6 +96,7 @@ export function VoiceRecorder() {
           try {
             const result = await clinicalNoteTranscription({ audioDataUri: base64Audio });
             setTranscription(result.transcription);
+            saveTranscription(result.transcription);
             setRecordingState("success");
           } catch (error) {
             console.error("Transcription failed:", error);
@@ -86,8 +123,8 @@ export function VoiceRecorder() {
     }
   };
   
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(transcription);
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
     setIsCopied(true);
     toast({ title: "Copied!", description: "The transcription has been copied to your clipboard." });
     setTimeout(() => setIsCopied(false), 2000);
@@ -97,6 +134,7 @@ export function VoiceRecorder() {
   const isProcessing = recordingState === "getting-mic" || recordingState === "stopped" || recordingState === "transcribing";
 
   return (
+    <>
     <Card>
       <CardContent className="p-6 grid gap-6">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 p-8 bg-muted/50 rounded-lg">
@@ -138,7 +176,7 @@ export function VoiceRecorder() {
                 <CardHeader className="px-0">
                     <CardTitle className="flex justify-between items-center">
                         <span>Generated Clinical Note</span>
-                        <Button variant="ghost" size="icon" onClick={copyToClipboard} disabled={!transcription}>
+                        <Button variant="ghost" size="icon" onClick={() => copyToClipboard(transcription)} disabled={!transcription}>
                             {isCopied ? <ClipboardCheck className="h-5 w-5 text-green-500" /> : <Clipboard className="h-5 w-5" />}
                         </Button>
                     </CardTitle>
@@ -162,5 +200,8 @@ export function VoiceRecorder() {
 
       </CardContent>
     </Card>
+    
+    <TranscriptionHistory history={transcriptionHistory} onCopy={copyToClipboard}/>
+    </>
   );
 }
