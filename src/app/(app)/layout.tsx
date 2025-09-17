@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from "react";
 import Link from "next/link";
@@ -18,6 +18,8 @@ import {
   Stethoscope,
   HeartPulse,
   Mic,
+  FileScan,
+  Lock,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
 
@@ -39,6 +41,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       href: "/transcription",
       icon: Mic,
       label: "Transcription",
+    },
+    {
+      href: "/xray-analyzer",
+      icon: FileScan,
+      label: "X-Ray Analyzer",
+    },
+    {
+      href: "/digilocker",
+      icon: Lock,
+      label: "DigiLocker",
     },
   ];
 
