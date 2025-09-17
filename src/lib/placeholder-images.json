@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "doc1",
+      "description": "Dr. Emily Carter, Cardiologist",
+      "imageUrl": "https://picsum.photos/seed/doc1/100/100",
+      "imageHint": "doctor portrait"
+    },
+    {
+      "id": "doc2",
+      "description": "Dr. Ben Adams, Neurologist",
+      "imageUrl": "https://picsum.photos/seed/doc2/100/100",
+      "imageHint": "doctor portrait"
+    },
+    {
+      "id": "doc3",
+      "description": "Dr. Chloe Davis, General Practitioner",
+      "imageUrl": "https://picsum.photos/seed/doc3/100/100",
+      "imageHint": "doctor portrait"
+    },
+    {
+      "id": "doc4",
+      "description": "Dr. Olivia Rodriguez, Pediatrician",
+      "imageUrl": "https://picsum.photos/seed/doc4/100/100",
+      "imageHint": "doctor portrait"
+    }
+  ]
 }
