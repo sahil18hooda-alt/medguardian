@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { QRCode } from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 
 import { cn } from '@/lib/utils';
 
@@ -95,7 +95,7 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 const DialogShare = ({ shareUrl, ...props }: { shareUrl: string }) => (
     <div className="flex flex-col items-center justify-center gap-4"> 
-        <QRCode value={shareUrl} size={256} />
+        <QRCodeSVG value={shareUrl} size={256} />
         <p className="text-sm text-muted-foreground"> 
             Scan this QR code or share the link below to share your medical records. 
         </p> 

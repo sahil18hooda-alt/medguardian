@@ -8,13 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { getFiles, uploadFile, downloadFile } from '@/lib/storage';
 import { Loader2, Download, Share2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogShare,
-} from "@/components/ui/dialog";
 
 interface FileObject {
   name: string;
@@ -26,7 +19,6 @@ export default function DigiLockerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [shareUrl, setShareUrl] = useState('');
   const { toast } = useToast();
   const router = useRouter();
 
@@ -99,8 +91,9 @@ export default function DigiLockerPage() {
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/share?token=dummy-token`;
-    setShareUrl(url);
+    const shareLink = `${window.location.origin}/share?token=dummy-token`;
+    navigator.clipboard.writeText(shareLink);
+    toast({ title: 'Share link copied to clipboard' });
   };
 
   const handleLogout = async () => {
@@ -109,26 +102,12 @@ export default function DigiLockerPage() {
 
   return (
     <div className="container mx-auto max-w-5xl">
-        <Dialog open={!!shareUrl} onOpenChange={() => setShareUrl('')}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Share Your Medical Records</DialogTitle>
-                </DialogHeader>
-                <DialogShare shareUrl={shareUrl} />
-            </DialogContent>
-        </Dialog>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-headline">Health DigiLocker</CardTitle>
-          <div className="flex gap-2">
-            <Button onClick={handleShare} variant="outline">
-                <Share2 className="mr-2 h-4 w-4" />
-                Share with Hospital
-            </Button>
-            <Button onClick={handleLogout} variant="outline">
-                Logout
-            </Button>
-          </div>
+          <Button onClick={handleLogout} variant="outline">
+            Logout
+          </Button>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
@@ -156,6 +135,9 @@ export default function DigiLockerPage() {
                     <div className="flex gap-2">
                       <Button size="icon" variant="ghost" onClick={() => handleDownload(file.name)}>
                         <Download className="h-4 w-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={handleShare}>
+                        <Share2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </li>

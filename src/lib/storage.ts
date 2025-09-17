@@ -1,30 +1,29 @@
 'use client';
 
-import { initializeApp } from 'firebase/app';
-import { getStorage, ref, uploadBytes, listAll, getDownloadURL, getBlob } from 'firebase/storage';
-import { v4 as uuidv4 } from 'uuid';
-import firebaseConfig from '@/lib/firebaseConfig';
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
+// This is a placeholder for your storage logic. 
+// You can replace this with your own implementation using a cloud storage provider like Firebase, AWS S3, or a self-hosted solution.
 
 export const uploadFile = async (file: File) => {
-  const storageRef = ref(storage, `uploads/${uuidv4()}-${file.name}`);
-  await uploadBytes(storageRef, file);
-  return { path: storageRef.fullPath };
+  // Simulate a file upload
+  console.log(`Uploading file: ${file.name}`);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return { path: `/${file.name}` };
 };
 
 export const getFiles = async () => {
-  const listRef = ref(storage, 'uploads');
-  const res = await listAll(listRef);
-  return res.items.map((itemRef) => ({ name: itemRef.name }));
+  // Simulate fetching a list of files
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return [
+    { name: 'Medical-Record-1.pdf' },
+    { name: 'Lab-Report-2.pdf' },
+    { name: 'X-Ray-3.jpg' },
+  ];
 };
 
 export const downloadFile = async (fileName: string) => {
-  const storageRef = ref(storage, `uploads/${fileName}`);
-  const url = await getDownloadURL(storageRef);
-  const blob = await fetch(url).then((res) => res.blob());
+  // Simulate downloading a file
+  console.log(`Downloading file: ${fileName}`);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  const blob = new Blob(['This is a dummy file content'], { type: 'application/octet-stream' });
   return blob;
-
 };
